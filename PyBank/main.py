@@ -5,12 +5,12 @@ budget_csv = os.path.join('Resources','budget_data.csv')
 
 #set variables
 total = 0
+rev = 0
+prev_rev = 0
+total_change = 0
 month_count = 0
-total_list = []
-diff_list = []
-# month_max = []
-# month_min = []
-# inc = ['',0]
+inc = ['',0]
+dec = ['', 9999999999]
 
 #initialize path
 with open(budget_csv, "r") as csvfile:
@@ -19,39 +19,38 @@ with open(budget_csv, "r") as csvfile:
 
     header = next(csvreader)
     #loop through data
-    for row in csvreader:
-        total_list.append(row[1])
-        total += int(row[1])
+    for i,row in enumerate(csvreader):
+        rev = int(row[1])
         month_count += 1
+        total += rev
+        
+        #create a variable for change in profit/loss
+        change = rev - prev_rev
 
-    #find the change difference between months
-    for row in range(1,len(total_list)):
-        rev_change = int(total_list[row]) - int(total_list[row -1])
-        diff_list.append(rev_change)
+        if i == 0:
+            change = 0
 
-    #I was trying other methods for change in Profit/Loss
+        total_change += change
+        prev_rev = rev
 
-    # max_inc = max(diff_list)
-    # max_dec = min(diff_list)
+        #determine max and min witth the associated month
+        if change > inc[1]:
+            inc[0] = row[0]
+            inc[1] = change
 
-    # for row in diff_list:
-    #     if max_inc == row[1]:
-    #         greatest_month = row[1]
-    #         month_max.append(greatest_month)
+        if change < dec[1]:
+            dec[0] = row[0]
+            dec[1] = change
+        #total_list.append(row[1])
 
-    #     if  max_dec == row[1]:
-    #         least_month = row[1]
-    #         month_min.append(least_month)
-
-    average = round(sum(diff_list)/len(diff_list),2)
 output = (
     "Financial Analysis\n"
     '----------------------------\n'
     f'Total Months: {month_count}\n'
     f'Total: ${total}\n'
-    f'Average Change: ${average}\n'
-    f'Greatest Increase in Profits: Feb-2012{max(diff_list)}\n'
-    f'Greatest Decrease in Profits: Sep-2013{min(diff_list)}\n'
+    f'Average Change: ${round(total_change/month_count - 1)}\n'
+    f'Greatest Increase in Profits: {inc[0]}: ${inc[1]}\n'
+    f'Greatest Decrease in Profits: {dec[0]}: ${dec[1]}\n'
 )
 print(output)
 
@@ -62,15 +61,4 @@ with open(output_path, "w") as datafile:
     writer = csv.writer(datafile)
 
     #write to txt file
-    writer.writerow(output)
-
-#     # inc = ['',0]
-#     # for row in csvreader:
-#     #     print(int(row[1]))
-#     #     if int(row[1]) > int(inc[1]):
-#     #         inc[0] = row[0]
-#     #         inc[1] = row[1]
-            
-#     #     diff_list.append(x)
-    
-#     # print(inc)
+    datafile.write(output)
