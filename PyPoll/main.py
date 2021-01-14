@@ -17,7 +17,7 @@ poll_csv_load = os.path.join('Resources','election_data.csv')
 with open(poll_csv_load, "r") as csvfile:
 
     # create a variable for the data to be read. DictReader
-    csvreader = csv.reader(csvfile)
+    csvreader = csv.reader(csvfile, delimiter=',')
     
     #skip the header row
     header = next(csvreader)
@@ -86,4 +86,4 @@ output_path = os.path.join("Analysis", "Analysis.txt")
 with open(output_path, "w", newline='') as datafile:
     writer = csv.writer(datafile)
 
-    writer.writerow(output)
+    datafile.write(output)
