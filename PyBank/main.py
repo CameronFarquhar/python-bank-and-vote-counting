@@ -27,6 +27,7 @@ with open(budget_csv, "r") as csvfile:
         #create a variable for change in profit/loss
         change = rev - prev_rev
 
+        #create conditional statement for change
         if i == 0:
             change = 0
 
